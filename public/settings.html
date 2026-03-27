@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings — Notion PDF</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f0f0f; color: #e8e8e8; min-height: 100vh; padding: 32px 16px; }
+    .container { max-width: 680px; margin: 0 auto; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+    h1 { font-size: 22px; font-weight: 700; }
+    a.back { color: #666; font-size: 14px; text-decoration: none; padding: 6px 12px; border: 1px solid #2a2a2a; border-radius: 6px; }
+    a.back:hover { color: #e8e8e8; border-color: #444; }
+    .card { background: #1a1a1a; border: 1px solid #252525; border-radius: 10px; padding: 20px; margin-bottom: 14px; }
+    .card h2 { font-size: 14px; color: #ccc; margin-bottom: 14px; }
+    label { display: block; font-size: 12px; color: #666; margin-bottom: 6px; }
+    input, textarea { width: 100%; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #e8e8e8; font-size: 14px; padding: 10px 12px; outline: none; transition: border-color .15s; }
+    input:focus, textarea:focus { border-color: #555; }
+    textarea { font-family: monospace; font-size: 12px; resize: vertical; min-height: 140px; }
+    .row { display: flex; gap: 8px; margin-top: 10px; }
+    button { cursor: pointer; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; padding: 8px 14px; transition: opacity .15s; }
+    .btn-primary { background: #fff; color: #000; }
+    .btn-primary:hover { opacity: .85; }
+    .btn-danger { background: #3a1010; color: #ff8888; }
+    .btn-danger:hover { background: #4a1414; }
+    .btn-ghost { background: #222; color: #aaa; border: 1px solid #2a2a2a; }
+    .btn-ghost:hover { background: #2a2a2a; }
+    .template-item { border: 1px solid #252525; border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; }
+    .template-item .name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .template-item .preview { font-size: 11px; font-family: monospace; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .template-item .actions { display: flex; gap: 6px; margin-top: 10px; }
+    .divider { border: none; border-top: 1px solid #222; margin: 16px 0; }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #fff; color: #000; padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; opacity: 0; transition: opacity .2s; pointer-events: none; }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <h1>Settings</h1>
+      <a href="/" class="back">← Back</a>
+    </div>
+
+    <!-- API Key -->
+    <div class="card">
+      <h2>Notion API Key</h2>
+      <label>Stored locally in your browser only</label>
+      <input type="password" id="apiKey" placeholder="secret_xxxxxxxxxxxx" />
+      <div class="row">
+        <button class="btn-primary" onclick="saveKey()">Save Key</button>
+        <button class="btn-danger" onclick="clearKey()">Clear</button>
+      </div>
+    </div>
+
+    <!-- Templates -->
+    <div class="card">
+      <h2>Saved Templates <span style="color:#555;font-weight:400;font-size:12px">(up to 5)</span></h2>
+      <div id="templateList"></div>
+
+      <hr class="divider">
+      <h2>Add New Template</h2>
+      <label>Template Name</label>
+      <input type="text" id="newName" placeholder="e.g. Increment Letter 2026" style="margin-bottom:10px" />
+      <label>HTML Content (must include <code style="background:#222;padding:1px 4px;border-radius:3px;font-size:11px">{{NOTION_CONTENT}}</code>)</label>
+      <textarea id="newContent" placeholder="<!DOCTYPE html>..."></textarea>
+      <div class="row">
+        <button class="btn-primary" onclick="addTemplate()">Add Template</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    function toast(msg) {
+      const el = $("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      setTimeout(() => el.classList.remove("show"), 2000);
+    }
+
+    function getTemplates() {
+      try { return JSON.parse(localStorage.getItem("notion_saved_templates") || "[]"); }
+      catch { return []; }
+    }
+
+    function saveTemplates(arr) {
+      localStorage.setItem("notion_saved_templates", JSON.stringify(arr));
+    }
+
+    function renderTemplates() {
+      const list = $("templateList");
+      const templates = getTemplates();
+      if (templates.length === 0) {
+        list.innerHTML = '<p style="color:#555;font-size:13px;margin-bottom:10px">No saved templates yet.</p>';
+        return;
+      }
+      list.innerHTML = templates.map((t, i) => `
+        <div class="template-item">
+          <div class="name">${escHtml(t.name)}</div>
+          <div class="preview">${escHtml(t.content.slice(0, 100))}…</div>
+          <div class="actions">
+            <button class="btn-ghost" onclick="useTemplate(${i})">Use as default</button>
+            <button class="btn-danger" onclick="deleteTemplate(${i})">Delete</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function escHtml(s) {
+      return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
+
+    window.onload = () => {
+      const k = localStorage.getItem("notion_api_key");
+      if (k) $("apiKey").value = k;
+      renderTemplates();
+    };
+
+    function saveKey() {
+      const v = $("apiKey").value.trim();
+      if (!v) return;
+      localStorage.setItem("notion_api_key", v);
+      toast("API key saved ✓");
+    }
+
+    function clearKey() {
+      localStorage.removeItem("notion_api_key");
+      $("apiKey").value = "";
+      toast("API key cleared");
+    }
+
+    function useTemplate(i) {
+      const t = getTemplates()[i];
+      if (!t) return;
+      localStorage.setItem("notion_template_default", t.content);
+      toast(`"${t.name}" set as default ✓`);
+    }
+
+    function deleteTemplate(i) {
+      const arr = getTemplates().filter((_, idx) => idx !== i);
+      saveTemplates(arr);
+      renderTemplates();
+      toast("Template deleted");
+    }
+
+    function addTemplate() {
+      const name = $("newName").value.trim();
+      const content = $("newContent").value.trim();
+      if (!name) return alert("Enter a template name.");
+      if (!content) return alert("Enter HTML content.");
+      if (!content.includes("{{NOTION_CONTENT}}")) return alert("Template must include {{NOTION_CONTENT}}");
+      const arr = getTemplates();
+      if (arr.length >= 5) return alert("Max 5 templates. Delete one first.");
+      arr.push({ name, content });
+      saveTemplates(arr);
+      $("newName").value = "";
+      $("newContent").value = "";
+      renderTemplates();
+      toast("Template added ✓");
+    }
+  </script>
+</body>
+</html>

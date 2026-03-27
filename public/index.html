@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notion → PDF</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f0f0f; color: #e8e8e8; min-height: 100vh; padding: 32px 16px; }
+    .container { max-width: 680px; margin: 0 auto; }
+    h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
+    h1 span { color: #666; font-weight: 400; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+    a.settings-link { color: #666; font-size: 14px; text-decoration: none; padding: 6px 12px; border: 1px solid #2a2a2a; border-radius: 6px; }
+    a.settings-link:hover { color: #e8e8e8; border-color: #444; }
+    .card { background: #1a1a1a; border: 1px solid #252525; border-radius: 10px; padding: 20px; margin-bottom: 14px; }
+    label { display: block; font-size: 13px; color: #888; margin-bottom: 8px; }
+    label strong { color: #ccc; }
+    input, textarea { width: 100%; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #e8e8e8; font-size: 14px; padding: 10px 12px; outline: none; transition: border-color .15s; }
+    input:focus, textarea:focus { border-color: #555; }
+    textarea { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; resize: vertical; min-height: 200px; }
+    .row { display: flex; gap: 8px; }
+    .row input { flex: 1; }
+    button { cursor: pointer; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; padding: 10px 18px; transition: opacity .15s; }
+    .btn-primary { background: #fff; color: #000; }
+    .btn-primary:hover { opacity: .85; }
+    .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-ghost { background: #222; color: #aaa; border: 1px solid #2a2a2a; }
+    .btn-ghost:hover { background: #2a2a2a; }
+    .generate-btn { width: 100%; padding: 13px; font-size: 15px; margin-top: 4px; }
+    .status-bar { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; background: #1a1a1a; border: 1px solid #252525; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #444; flex-shrink: 0; }
+    .dot.blue { background: #3b82f6; animation: pulse 1s infinite; }
+    .dot.green { background: #22c55e; }
+    .dot.red { background: #ef4444; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .result-bar { display: flex; gap: 8px; padding: 14px 16px; background: #0f2a1a; border: 1px solid #1a4a2a; border-radius: 8px; margin-bottom: 14px; }
+    .error-bar { background: #2a0f0f; border-color: #4a1a1a; color: #ff8888; padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; }
+    .help { font-size: 12px; color: #555; margin-top: 6px; }
+    code { background: #222; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-size: 12px; color: #aaa; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <h1>Notion <span>→</span> PDF</h1>
+      <a href="settings.html" class="settings-link">⚙ Settings</a>
+    </div>
+
+    <!-- Status -->
+    <div class="status-bar" id="statusBar">
+      <div class="dot" id="statusDot"></div>
+      <span id="statusText">Idle — ready to convert</span>
+    </div>
+
+    <!-- Result -->
+    <div class="result-bar" id="resultBar" style="display:none">
+      <a id="downloadLink" download="notion-export.pdf"><button class="btn-primary">⬇ Download PDF</button></a>
+      <a id="openLink" target="_blank"><button class="btn-ghost">↗ Open in tab</button></a>
+    </div>
+
+    <!-- Error -->
+    <div class="error-bar" id="errorBar" style="display:none"></div>
+
+    <!-- API Key -->
+    <div class="card">
+      <label><strong>Notion API Key</strong><br>From notion.so/my-integrations</label>
+      <div class="row">
+        <input type="password" id="apiKey" placeholder="secret_xxxxxxxxxxxx" />
+        <button class="btn-ghost" onclick="saveKey()">Save</button>
+      </div>
+    </div>
+
+    <!-- Notion URL -->
+    <div class="card">
+      <label><strong>Notion Page URL</strong></label>
+      <input type="url" id="notionUrl" placeholder="https://www.notion.so/Your-Page-Title-abc123..." />
+    </div>
+
+    <!-- Template -->
+    <div class="card">
+      <label>
+        <strong>HTML Letter Template</strong><br>
+        Paste your Figma-exported HTML. Must include <code>{{NOTION_CONTENT}}</code> placeholder.
+      </label>
+      <textarea id="htmlTemplate" placeholder="<!DOCTYPE html>&#10;<html>&#10;...&#10;{{NOTION_CONTENT}}&#10;...&#10;</html>"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button class="btn-ghost" onclick="saveTemplate()">Save as default</button>
+        <button class="btn-ghost" onclick="loadTemplate()">Load saved</button>
+      </div>
+      <p class="help">The <code>{{NOTION_CONTENT}}</code> placeholder will be replaced with the Notion page content.</p>
+    </div>
+
+    <button class="btn-primary generate-btn" id="generateBtn" onclick="generate()">Generate PDF</button>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    // Load saved values
+    window.onload = () => {
+      const k = localStorage.getItem("notion_api_key");
+      if (k) $("apiKey").value = k;
+      const t = localStorage.getItem("notion_template_default");
+      if (t) $("htmlTemplate").value = t;
+    };
+
+    function saveKey() {
+      const v = $("apiKey").value.trim();
+      if (!v) return;
+      localStorage.setItem("notion_api_key", v);
+      flashBtn(event.target, "Saved ✓");
+    }
+
+    function saveTemplate() {
+      const v = $("htmlTemplate").value.trim();
+      if (!v) return;
+      localStorage.setItem("notion_template_default", v);
+      flashBtn(event.target, "Saved ✓");
+    }
+
+    function loadTemplate() {
+      const t = localStorage.getItem("notion_template_default");
+      if (t) $("htmlTemplate").value = t;
+    }
+
+    function flashBtn(btn, text) {
+      const orig = btn.textContent;
+      btn.textContent = text;
+      setTimeout(() => btn.textContent = orig, 1500);
+    }
+
+    function setStatus(state, msg) {
+      const dot = $("statusDot");
+      dot.className = "dot " + (state === "loading" ? "blue" : state === "done" ? "green" : state === "error" ? "red" : "");
+      $("statusText").textContent = msg;
+    }
+
+    async function generate() {
+      const apiKey = $("apiKey").value.trim();
+      const notionUrl = $("notionUrl").value.trim();
+      const htmlTemplate = $("htmlTemplate").value.trim();
+
+      if (!apiKey) return alert("Enter your Notion API key.");
+      if (!notionUrl) return alert("Enter a Notion page URL.");
+      if (!htmlTemplate) return alert("Paste an HTML template.");
+      if (!htmlTemplate.includes("{{NOTION_CONTENT}}")) return alert("Template must include {{NOTION_CONTENT}}");
+
+      localStorage.setItem("notion_api_key", apiKey);
+
+      $("resultBar").style.display = "none";
+      $("errorBar").style.display = "none";
+      $("generateBtn").disabled = true;
+
+      setStatus("loading", "Fetching Notion content & rendering PDF…");
+
+      try {
+        const res = await fetch("/api/convert", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ notionUrl, apiKey, htmlTemplate }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({ error: "Server error" }));
+          throw new Error(data.error || "Conversion failed");
+        }
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        $("downloadLink").href = url;
+        $("openLink").href = url;
+        $("resultBar").style.display = "flex";
+        setStatus("done", "PDF ready ✓");
+      } catch (e) {
+        $("errorBar").textContent = "Error: " + e.message;
+        $("errorBar").style.display = "block";
+        setStatus("error", "Conversion failed");
+      } finally {
+        $("generateBtn").disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
