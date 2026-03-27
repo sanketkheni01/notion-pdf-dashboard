@@ -87,9 +87,17 @@
   <script>
     const $ = id => document.getElementById(id);
 
-    window.onload = () => {
-      const t = localStorage.getItem("notion_template_default");
-      if (t) $("htmlTemplate").value = t;
+    window.onload = async () => {
+      const saved = localStorage.getItem("notion_template_default");
+      if (saved) {
+        $("htmlTemplate").value = saved;
+      } else {
+        // Auto-load the Nextbase letterhead template
+        try {
+          const r = await fetch("/template-nextbase.html");
+          if (r.ok) $("htmlTemplate").value = await r.text();
+        } catch {}
+      }
     };
 
     function saveTemplate() {
