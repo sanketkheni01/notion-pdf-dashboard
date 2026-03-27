@@ -42,17 +42,6 @@
       <a href="/" class="back">← Back</a>
     </div>
 
-    <!-- API Key -->
-    <div class="card">
-      <h2>Notion API Key</h2>
-      <label>Stored locally in your browser only</label>
-      <input type="password" id="apiKey" placeholder="secret_xxxxxxxxxxxx" />
-      <div class="row">
-        <button class="btn-primary" onclick="saveKey()">Save Key</button>
-        <button class="btn-danger" onclick="clearKey()">Clear</button>
-      </div>
-    </div>
-
     <!-- Templates -->
     <div class="card">
       <h2>Saved Templates <span style="color:#555;font-weight:400;font-size:12px">(up to 5)</span></h2>
@@ -115,23 +104,8 @@
     }
 
     window.onload = () => {
-      const k = localStorage.getItem("notion_api_key");
-      if (k) $("apiKey").value = k;
       renderTemplates();
     };
-
-    function saveKey() {
-      const v = $("apiKey").value.trim();
-      if (!v) return;
-      localStorage.setItem("notion_api_key", v);
-      toast("API key saved ✓");
-    }
-
-    function clearKey() {
-      localStorage.removeItem("notion_api_key");
-      $("apiKey").value = "";
-      toast("API key cleared");
-    }
 
     function useTemplate(i) {
       const t = getTemplates()[i];

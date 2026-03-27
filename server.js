@@ -95,10 +95,14 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.post("/api/convert", async (req, res) => {
-  const { notionUrl, apiKey, htmlTemplate } = req.body;
+  const { notionUrl, htmlTemplate } = req.body;
+  const apiKey = process.env.NOTION_API_KEY;
 
-  if (!notionUrl || !apiKey || !htmlTemplate) {
-    return res.status(400).json({ error: "notionUrl, apiKey, and htmlTemplate are required." });
+  if (!notionUrl || !htmlTemplate) {
+    return res.status(400).json({ error: "notionUrl and htmlTemplate are required." });
+  }
+  if (!apiKey) {
+    return res.status(500).json({ error: "NOTION_API_KEY not configured on server." });
   }
   if (!htmlTemplate.includes("{{NOTION_CONTENT}}")) {
     return res.status(400).json({ error: "htmlTemplate must include {{NOTION_CONTENT}} placeholder." });
