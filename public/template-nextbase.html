@@ -2,36 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nextbase Letterhead</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Geist:wght@400&display=swap" rel="stylesheet" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap');
+    @page {
+      size: A4;
+      margin: 0;
+    }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: #fff;
-      font-family: 'Geist', 'Inter', sans-serif;
-      color: #0a0a0a;
-    }
-
-    .page {
       width: 595px;
-      min-height: 842px;
-      margin: 0 auto;
       background: #fff;
-      display: flex;
-      flex-direction: column;
-      position: relative;
+      font-family: 'Geist', 'Inter', Arial, sans-serif;
+      color: #0a0a0a;
+      font-size: 11px;
     }
 
-    /* ── HEADER ───────────────────────────────── */
-    .header {
-      width: 556px;
-      margin: 21px auto 0;
+    /* ── HEADER (fixed, repeats on every page) ─────── */
+    .letterhead-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 595px;
+      height: 86px; /* 21px top padding + 64px frame + 1px divider */
+      background: #fff;
+      z-index: 1000;
+    }
+
+    .header-inner {
       display: flex;
       align-items: center;
+      width: 556px;
+      margin: 21px auto 0;
       height: 64px;
     }
 
@@ -39,7 +43,6 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      width: 168px;
     }
 
     .logo-icon {
@@ -51,66 +54,49 @@
     .logo-text {
       display: flex;
       flex-direction: column;
-      gap: 0px;
+      line-height: 1.25;
     }
 
     .logo-name {
       font-family: 'Poppins', sans-serif;
-      font-size: 15.5px;
+      font-size: 23px;
       font-weight: 600;
       color: #0a0a0a;
-      line-height: 1.2;
-      letter-spacing: -0.2px;
+      letter-spacing: -0.3px;
     }
 
     .logo-sub {
       font-family: 'Poppins', sans-serif;
-      font-size: 7.5px;
+      font-size: 7.85px;
       font-weight: 500;
       color: #525252;
-      line-height: 1.4;
     }
 
     .header-divider {
       width: 556px;
       margin: 0 auto;
-      height: 1px;
+      height: 0.5px;
       background: #e5e5e5;
     }
 
-    /* ── CONTENT ──────────────────────────────── */
-    .content {
-      flex: 1;
+    /* ── FOOTER (fixed, repeats on every page) ─────── */
+    .letterhead-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 595px;
+      height: 144px;
+      background: #fff;
+      z-index: 1000;
+    }
+
+    .footer-inner {
       width: 556px;
       margin: 0 auto;
-      padding: 28px 0 32px;
-      font-size: 11px;
-      line-height: 1.7;
-      color: #0a0a0a;
     }
 
-    .content h1 { font-size: 16px; font-weight: 600; margin-bottom: 12px; font-family: 'Poppins', sans-serif; }
-    .content h2 { font-size: 13px; font-weight: 600; margin-bottom: 8px; margin-top: 16px; font-family: 'Poppins', sans-serif; }
-    .content h3 { font-size: 12px; font-weight: 600; margin-bottom: 6px; margin-top: 12px; font-family: 'Poppins', sans-serif; }
-    .content p  { margin-bottom: 10px; }
-    .content ul, .content ol { margin: 6px 0 10px 18px; }
-    .content li { margin-bottom: 3px; }
-    .content hr { border: none; border-top: 1px solid #e5e5e5; margin: 14px 0; }
-    .content blockquote { border-left: 3px solid #e5e5e5; padding-left: 12px; color: #525252; margin: 8px 0; }
-    .content strong { font-weight: 600; }
-    .content em { font-style: italic; }
-    .content code { background: #f4f4f4; padding: 1px 4px; border-radius: 3px; font-size: 10px; font-family: monospace; }
-
-    /* ── FOOTER ───────────────────────────────── */
-    .footer {
-      width: 556px;
-      margin: 0 auto 0;
-      padding-bottom: 20px;
-    }
-
-    .footer-divider {
-      width: 556px;
-      height: 1px;
+    .footer-top-divider {
+      height: 0.5px;
       background: #e5e5e5;
       margin-bottom: 16px;
     }
@@ -138,7 +124,7 @@
     }
 
     .footer-text {
-      font-family: 'Geist', 'Inter', sans-serif;
+      font-family: 'Geist', 'Inter', Arial, sans-serif;
       font-size: 11px;
       font-weight: 400;
       color: #525252;
@@ -146,10 +132,9 @@
     }
 
     .footer-addr-divider {
-      width: 556px;
-      height: 1px;
+      height: 0.5px;
       background: #e5e5e5;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .footer-address {
@@ -160,85 +145,152 @@
 
     .footer-address .footer-text {
       flex: 1;
+      line-height: 1.4;
+    }
+
+    /* ── CONTENT (push away from fixed header/footer) ─ */
+    .content-body {
+      margin-top: 86px;
+      margin-bottom: 144px;
+      padding: 24px 19.5px 16px;
+      line-height: 1.75;
+      font-size: 11px;
+    }
+
+    .content-body h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: #0a0a0a;
+    }
+
+    .content-body h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      margin-top: 18px;
+      color: #0a0a0a;
+    }
+
+    .content-body h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      margin-top: 14px;
+      color: #0a0a0a;
+    }
+
+    .content-body p  { margin-bottom: 10px; }
+    .content-body br { display: block; margin-bottom: 6px; }
+
+    .content-body ul,
+    .content-body ol {
+      margin: 6px 0 10px 18px;
+    }
+
+    .content-body li { margin-bottom: 4px; }
+
+    .content-body hr {
+      border: none;
+      border-top: 0.5px solid #e5e5e5;
+      margin: 14px 0;
+    }
+
+    .content-body blockquote {
+      border-left: 3px solid #e5e5e5;
+      padding-left: 12px;
+      color: #525252;
+      margin: 8px 0;
+    }
+
+    .content-body strong { font-weight: 600; }
+    .content-body em     { font-style: italic; }
+
+    .content-body code {
+      background: #f4f4f4;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-family: monospace;
     }
   </style>
 </head>
 <body>
-<div class="page">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="logo-block">
-      <!-- Logo icon (Nextbase circle mark) -->
-      <svg class="logo-icon" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M21.3257 0C33.1036 0 42.6515 9.54797 42.6515 21.3258C42.6515 33.1037 33.1036 42.6515 21.3257 42.6515C9.54788 42.6515 0 33.1037 0 21.3258C1.11467e-05 9.54796 9.54788 0 21.3257 0ZM9.68693 21.2817L21.266 20.5198L26.6016 31.2282V11.5184L9.68693 21.2817Z" fill="#0A0A0A"/>
-      </svg>
-      <div class="logo-text">
-        <span class="logo-name">Nextbase</span>
-        <span class="logo-sub">Solutions Private Limited</span>
+  <!-- HEADER — fixed, appears on every page -->
+  <div class="letterhead-header">
+    <div class="header-inner">
+      <div class="logo-block">
+        <svg class="logo-icon" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21.3257 0C33.1036 0 42.6515 9.54797 42.6515 21.3258C42.6515 33.1037 33.1036 42.6515 21.3257 42.6515C9.54788 42.6515 0 33.1037 0 21.3258C1.11467e-05 9.54796 9.54788 0 21.3257 0ZM9.68693 21.2817L21.266 20.5198L26.6016 31.2282V11.5184L9.68693 21.2817Z" fill="#0A0A0A"/>
+        </svg>
+        <div class="logo-text">
+          <span class="logo-name">Nextbase</span>
+          <span class="logo-sub">Solutions Private Limited</span>
+        </div>
       </div>
     </div>
+    <div class="header-divider"></div>
   </div>
 
-  <div class="header-divider"></div>
-
   <!-- CONTENT -->
-  <div class="content">
+  <div class="content-body">
     {{NOTION_CONTENT}}
   </div>
 
-  <!-- FOOTER -->
-  <div class="footer">
-    <div class="footer-divider"></div>
+  <!-- FOOTER — fixed, appears on every page -->
+  <div class="letterhead-footer">
+    <div class="footer-inner">
+      <div class="footer-top-divider"></div>
 
-    <div class="footer-contacts">
-      <!-- Email -->
-      <div class="footer-row">
-        <div class="footer-icon">
-          <svg width="13" height="11" viewBox="0 0 13 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="0.5" y="0.5" width="12" height="10" rx="1.5" stroke="#525252"/>
-            <path d="M1 1L6.5 6.5L12 1" stroke="#525252"/>
-          </svg>
+      <div class="footer-contacts">
+        <div class="footer-row">
+          <div class="footer-icon">
+            <svg width="13" height="11" viewBox="0 0 13 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="0.5" y="0.5" width="12" height="10" rx="1.5" stroke="#525252"/>
+              <path d="M0.5 2L6.5 6.5L12.5 2" stroke="#525252"/>
+            </svg>
+          </div>
+          <span class="footer-text">contact@nextbase.solutions</span>
         </div>
-        <span class="footer-text">contact@nextbase.solutions</span>
+
+        <div class="footer-row">
+          <div class="footer-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 8.5C11 8.5 9.5 10 9 10C5 10 2 7 2 3C2 2.5 3.5 1 3.5 1L5.5 4.5L4.5 5.5C5 7 6.5 8 7.5 8L8.5 7L11 8.5Z" stroke="#525252" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="footer-text">+91 94271 36629</span>
+        </div>
+
+        <div class="footer-row">
+          <div class="footer-icon">
+            <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="6" cy="6.5" r="5.5" stroke="#525252"/>
+              <ellipse cx="6" cy="6.5" rx="2" ry="5.5" stroke="#525252"/>
+              <line x1="0.5" y1="6.5" x2="11.5" y2="6.5" stroke="#525252"/>
+            </svg>
+          </div>
+          <span class="footer-text">www.nextbase.solutions</span>
+        </div>
       </div>
 
-      <!-- Phone -->
-      <div class="footer-row">
-        <div class="footer-icon">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M11 8.5L8.5 10C4.5 10 2 7.5 2 3.5L3.5 1L5.5 4L4.5 5C5 6.5 6.5 7.5 7.5 7.5L8.5 6.5L11 8.5Z" stroke="#525252" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <span class="footer-text">+91 94271 36629</span>
-      </div>
+      <div class="footer-addr-divider"></div>
 
-      <!-- Website -->
-      <div class="footer-row">
+      <div class="footer-address">
         <div class="footer-icon">
           <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="6" cy="6.5" r="5.5" stroke="#525252"/>
-            <path d="M1 6.5H11M6 1.5C6 1.5 4 3.5 4 6.5C4 9.5 6 11.5 6 11.5C6 11.5 8 9.5 8 6.5C8 3.5 6 1.5 6 1.5Z" stroke="#525252"/>
+            <path d="M10 6C10 9.5 6 12 6 12C6 12 2 9.5 2 6C2 3.79086 3.79086 2 6 2C8.20914 2 10 3.79086 10 6Z" stroke="#525252"/>
+            <circle cx="6" cy="6" r="2" stroke="#525252"/>
           </svg>
         </div>
-        <span class="footer-text">www.nextbase.solutions</span>
+        <span class="footer-text">505 RIO Bussiness Hub, Beside KBC 2, Yamuna Chowk, Mota Varachha, Surat, Gujarat 394101.</span>
       </div>
-    </div>
-
-    <div class="footer-addr-divider"></div>
-
-    <!-- Address -->
-    <div class="footer-address">
-      <div class="footer-icon">
-        <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="6" cy="6" r="2" stroke="#525252"/>
-          <path d="M10 6C10 9.5 6 12 6 12C6 12 2 9.5 2 6C2 3.79086 3.79086 2 6 2C8.20914 2 10 3.79086 10 6Z" stroke="#525252"/>
-        </svg>
-      </div>
-      <span class="footer-text">505 RIO Bussiness Hub, Beside KBC 2, Yamuna Chowk, Mota Varachha, Surat, Gujarat 394101.</span>
     </div>
   </div>
 
-</div>
 </body>
 </html>

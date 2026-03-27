@@ -3,167 +3,222 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Notion → PDF</title>
+  <title>Notion → PDF · Nextbase</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f0f0f; color: #e8e8e8; min-height: 100vh; padding: 32px 16px; }
-    .container { max-width: 680px; margin: 0 auto; }
-    h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
-    h1 span { color: #666; font-weight: 400; }
-    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
-    a.settings-link { color: #666; font-size: 14px; text-decoration: none; padding: 6px 12px; border: 1px solid #2a2a2a; border-radius: 6px; }
-    a.settings-link:hover { color: #e8e8e8; border-color: #444; }
-    .card { background: #1a1a1a; border: 1px solid #252525; border-radius: 10px; padding: 20px; margin-bottom: 14px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f0f0f;
+      color: #e8e8e8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+    .container { width: 100%; max-width: 540px; }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .logo svg { width: 28px; height: 28px; }
+    .logo-name { font-size: 17px; font-weight: 600; color: #fff; letter-spacing: -0.3px; }
+    .logo-sep { color: #444; margin: 0 4px; }
+    .logo-sub { color: #666; font-size: 14px; }
+
+    h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .subtitle { color: #666; font-size: 14px; margin-bottom: 28px; }
+
+    .card { background: #1a1a1a; border: 1px solid #252525; border-radius: 10px; padding: 20px; margin-bottom: 12px; }
     label { display: block; font-size: 13px; color: #888; margin-bottom: 8px; }
     label strong { color: #ccc; }
-    input, textarea { width: 100%; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #e8e8e8; font-size: 14px; padding: 10px 12px; outline: none; transition: border-color .15s; }
-    input:focus, textarea:focus { border-color: #555; }
-    textarea { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; resize: vertical; min-height: 200px; }
-    .row { display: flex; gap: 8px; }
-    button { cursor: pointer; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; padding: 10px 18px; transition: opacity .15s; }
-    .btn-primary { background: #fff; color: #000; }
-    .btn-primary:hover { opacity: .85; }
-    .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
-    .btn-ghost { background: #222; color: #aaa; border: 1px solid #2a2a2a; }
-    .btn-ghost:hover { background: #2a2a2a; }
-    .generate-btn { width: 100%; padding: 13px; font-size: 15px; margin-top: 4px; }
-    .status-bar { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; background: #1a1a1a; border: 1px solid #252525; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: #444; flex-shrink: 0; }
-    .dot.blue { background: #3b82f6; animation: pulse 1s infinite; }
-    .dot.green { background: #22c55e; }
-    .dot.red { background: #ef4444; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-    .result-bar { display: flex; gap: 8px; padding: 14px 16px; background: #0f2a1a; border: 1px solid #1a4a2a; border-radius: 8px; margin-bottom: 14px; }
-    .error-bar { background: #2a0f0f; border-color: #4a1a1a; color: #ff8888; padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; }
-    .help { font-size: 12px; color: #555; margin-top: 6px; }
-    code { background: #222; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-size: 12px; color: #aaa; }
+    input {
+      width: 100%;
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      color: #e8e8e8;
+      font-size: 14px;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color .15s;
+    }
+    input:focus { border-color: #555; }
+    input::placeholder { color: #444; }
+
+    .generate-btn {
+      width: 100%;
+      padding: 14px;
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .15s;
+      margin-top: 4px;
+    }
+    .generate-btn:hover   { opacity: .88; }
+    .generate-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: #1a1a1a;
+      border: 1px solid #252525;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #333; flex-shrink: 0; }
+    .dot.loading { background: #3b82f6; animation: pulse 1s infinite; }
+    .dot.done    { background: #22c55e; }
+    .dot.error   { background: #ef4444; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    .result-bar {
+      display: flex;
+      gap: 8px;
+      padding: 14px 16px;
+      background: #0f2a1a;
+      border: 1px solid #1a4a2a;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .result-bar button {
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 16px;
+    }
+    .btn-dl   { background: #fff; color: #000; }
+    .btn-open { background: #222; color: #aaa; border: 1px solid #2a2a2a; }
+    .btn-dl:hover   { opacity: .85; }
+    .btn-open:hover { background: #2a2a2a; }
+
+    .error-bar {
+      padding: 12px 16px;
+      background: #2a0f0f;
+      border: 1px solid #4a1a1a;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #ff8888;
+      margin-bottom: 12px;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #444;
+      margin-top: 8px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="topbar">
-      <h1>Notion <span>→</span> PDF</h1>
-      <a href="settings.html" class="settings-link">⚙ Settings</a>
-    </div>
+<div class="container">
 
-    <!-- Status -->
-    <div class="status-bar" id="statusBar">
-      <div class="dot" id="statusDot"></div>
-      <span id="statusText">Idle — ready to convert</span>
-    </div>
-
-    <!-- Result -->
-    <div class="result-bar" id="resultBar" style="display:none">
-      <a id="downloadLink" download="notion-export.pdf"><button class="btn-primary">⬇ Download PDF</button></a>
-      <a id="openLink" target="_blank"><button class="btn-ghost">↗ Open in tab</button></a>
-    </div>
-
-    <!-- Error -->
-    <div class="error-bar" id="errorBar" style="display:none"></div>
-
-    <!-- Notion URL -->
-    <div class="card">
-      <label><strong>Notion Page URL</strong></label>
-      <input type="url" id="notionUrl" placeholder="https://www.notion.so/Your-Page-Title-abc123..." />
-    </div>
-
-    <!-- Template -->
-    <div class="card">
-      <label>
-        <strong>HTML Letter Template</strong><br>
-        Paste your Figma-exported HTML. Must include <code>{{NOTION_CONTENT}}</code> placeholder.
-      </label>
-      <textarea id="htmlTemplate" placeholder="<!DOCTYPE html>&#10;<html>&#10;...&#10;{{NOTION_CONTENT}}&#10;...&#10;</html>"></textarea>
-      <div class="row" style="margin-top:8px">
-        <button class="btn-ghost" onclick="saveTemplate()">Save as default</button>
-        <button class="btn-ghost" onclick="loadTemplate()">Load saved</button>
-      </div>
-      <p class="help">The <code>{{NOTION_CONTENT}}</code> placeholder will be replaced with the Notion page content.</p>
-    </div>
-
-    <button class="btn-primary generate-btn" id="generateBtn" onclick="generate()">Generate PDF</button>
+  <div class="logo">
+    <svg viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M21.3257 0C33.1036 0 42.6515 9.54797 42.6515 21.3258C42.6515 33.1037 33.1036 42.6515 21.3257 42.6515C9.54788 42.6515 0 33.1037 0 21.3258C1.11467e-05 9.54796 9.54788 0 21.3257 0ZM9.68693 21.2817L21.266 20.5198L26.6016 31.2282V11.5184L9.68693 21.2817Z" fill="white"/>
+    </svg>
+    <span class="logo-name">Nextbase</span>
+    <span class="logo-sep">·</span>
+    <span class="logo-sub">Notion → PDF</span>
   </div>
 
-  <script>
-    const $ = id => document.getElementById(id);
+  <!-- Status -->
+  <div class="status-bar" id="statusBar">
+    <div class="dot" id="statusDot"></div>
+    <span id="statusText">Ready — paste a Notion page URL below</span>
+  </div>
 
-    window.onload = async () => {
-      const saved = localStorage.getItem("notion_template_default");
-      if (saved) {
-        $("htmlTemplate").value = saved;
-      } else {
-        // Auto-load the Nextbase letterhead template
-        try {
-          const r = await fetch("/template-nextbase.html");
-          if (r.ok) $("htmlTemplate").value = await r.text();
-        } catch {}
+  <!-- Result -->
+  <div class="result-bar" id="resultBar" style="display:none">
+    <a id="downloadLink" download="increment-letter.pdf">
+      <button class="btn-dl">⬇ Download PDF</button>
+    </a>
+    <a id="openLink" target="_blank">
+      <button class="btn-open">↗ Open in tab</button>
+    </a>
+  </div>
+
+  <!-- Error -->
+  <div class="error-bar" id="errorBar" style="display:none"></div>
+
+  <!-- Input -->
+  <div class="card">
+    <label><strong>Notion Page URL</strong></label>
+    <input
+      type="url"
+      id="notionUrl"
+      placeholder="https://www.notion.so/Your-Letter-Title-abc123def456..."
+      autocomplete="off"
+    />
+  </div>
+
+  <button class="generate-btn" id="generateBtn" onclick="generate()">
+    Generate PDF
+  </button>
+
+  <p class="hint">Uses Nextbase letterhead. A4, header &amp; footer on every page.</p>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  function setStatus(state, msg) {
+    $("statusDot").className = "dot " + (state || "");
+    $("statusText").textContent = msg;
+  }
+
+  async function generate() {
+    const notionUrl = $("notionUrl").value.trim();
+    if (!notionUrl) { $("notionUrl").focus(); return; }
+
+    $("resultBar").style.display = "none";
+    $("errorBar").style.display  = "none";
+    $("generateBtn").disabled    = true;
+    setStatus("loading", "Fetching Notion content & rendering PDF…");
+
+    try {
+      const res = await fetch("/api/convert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notionUrl }),
+      });
+
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({ error: "Server error" }));
+        throw new Error(d.error || "Conversion failed");
       }
-    };
 
-    function saveTemplate() {
-      const v = $("htmlTemplate").value.trim();
-      if (!v) return;
-      localStorage.setItem("notion_template_default", v);
-      flashBtn(event.target, "Saved ✓");
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+      $("downloadLink").href = url;
+      $("openLink").href     = url;
+      $("resultBar").style.display = "flex";
+      setStatus("done", "PDF ready ✓");
+    } catch (e) {
+      $("errorBar").textContent    = "Error: " + e.message;
+      $("errorBar").style.display  = "block";
+      setStatus("error", "Conversion failed");
+    } finally {
+      $("generateBtn").disabled = false;
     }
+  }
 
-    function loadTemplate() {
-      const t = localStorage.getItem("notion_template_default");
-      if (t) $("htmlTemplate").value = t;
-    }
-
-    function flashBtn(btn, text) {
-      const orig = btn.textContent;
-      btn.textContent = text;
-      setTimeout(() => btn.textContent = orig, 1500);
-    }
-
-    function setStatus(state, msg) {
-      const dot = $("statusDot");
-      dot.className = "dot " + (state === "loading" ? "blue" : state === "done" ? "green" : state === "error" ? "red" : "");
-      $("statusText").textContent = msg;
-    }
-
-    async function generate() {
-      const notionUrl = $("notionUrl").value.trim();
-      const htmlTemplate = $("htmlTemplate").value.trim();
-
-      if (!notionUrl) return alert("Enter a Notion page URL.");
-      if (!htmlTemplate) return alert("Paste an HTML template.");
-      if (!htmlTemplate.includes("{{NOTION_CONTENT}}")) return alert("Template must include {{NOTION_CONTENT}}");
-
-      $("resultBar").style.display = "none";
-      $("errorBar").style.display = "none";
-      $("generateBtn").disabled = true;
-
-      setStatus("loading", "Fetching Notion content & rendering PDF…");
-
-      try {
-        const res = await fetch("/api/convert", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ notionUrl, htmlTemplate }),
-        });
-
-        if (!res.ok) {
-          const data = await res.json().catch(() => ({ error: "Server error" }));
-          throw new Error(data.error || "Conversion failed");
-        }
-
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        $("downloadLink").href = url;
-        $("openLink").href = url;
-        $("resultBar").style.display = "flex";
-        setStatus("done", "PDF ready ✓");
-      } catch (e) {
-        $("errorBar").textContent = "Error: " + e.message;
-        $("errorBar").style.display = "block";
-        setStatus("error", "Conversion failed");
-      } finally {
-        $("generateBtn").disabled = false;
-      }
-    }
-  </script>
+  // Allow Enter key in URL field
+  $("notionUrl").addEventListener("keydown", e => {
+    if (e.key === "Enter") generate();
+  });
+</script>
 </body>
 </html>
