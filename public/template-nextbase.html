@@ -5,7 +5,7 @@
   <title>Nextbase Letterhead</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Geist:wght@400&display=swap" rel="stylesheet" />
   <style>
-    @page { size: A4; margin: 0; }
+    @page { size: A4; }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -102,7 +102,9 @@
 
     /* ── CONTENT ─ */
     .content-body {
-      padding: 8px 40px 16px;
+      padding: 8px 40px 20px;
+      margin-top: 80px;   /* clear fixed header */
+      margin-bottom: 110px; /* clear fixed footer */
       line-height: 1.75;
       font-size: 11pt;
     }
