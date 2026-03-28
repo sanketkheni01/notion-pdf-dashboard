@@ -58,6 +58,29 @@ function blockToHtml(block) {
     case "divider":            return "<hr>";
     case "quote":              return `<blockquote>${richText(b.rich_text)}</blockquote>`;
     case "callout":            return `<div style="background:#f8f8f8;border-left:4px solid #888;padding:10px 14px;margin:8px 0">${richText(b.rich_text)}</div>`;
+    case "to_do": {
+      const checked = b.checked ? ' checked' : '';
+      return `<div class="todo-item"><div class="todo-check${checked}"></div><span>${richText(b.rich_text)}</span></div>`;
+    }
+    case "code": {
+      const code = richText(b.rich_text);
+      return `<pre>${code}</pre>`;
+    }
+    case "image": {
+      const url = b.type === "file" ? b.file.url : b.external?.url;
+      const caption = b.caption?.length ? `<figcaption>${richText(b.caption)}</figcaption>` : '';
+      return url ? `<figure class="notion-image"><img src="${url}" />${caption}</figure>` : '';
+    }
+    case "table":              return `__TABLE_START_${block.id}__`;
+    case "table_row": {
+      const cells = b.cells.map(c => `<td>${richText(c)}</td>`).join('');
+      return `__TROW__${cells}__ENDTROW__`;
+    }
+    case "bookmark":           return b.url ? `<p><a href="${b.url}" style="color:#525252">${b.url}</a></p>` : '';
+    case "toggle": {
+      return `<p><strong>${richText(b.rich_text)}</strong></p>`;
+    }
+    case "__table_end":        return "__TABLE_END__";
     default:                   return "";
   }
 }
@@ -65,6 +88,7 @@ function blockToHtml(block) {
 function wrapLists(parts) {
   let html = "";
   let i = 0;
+  let firstTableRow = true;
   while (i < parts.length) {
     if (parts[i].startsWith("__BULLET__")) {
       html += "<ul>";
@@ -80,6 +104,22 @@ function wrapLists(parts) {
         i++;
       }
       html += "</ol>";
+    } else if (parts[i].startsWith("__TABLE_START_")) {
+      html += "<table>";
+      firstTableRow = true;
+      i++;
+    } else if (parts[i].startsWith("__TROW__")) {
+      const cells = parts[i].replace("__TROW__", "").replace("__ENDTROW__", "");
+      if (firstTableRow) {
+        html += `<tr>${cells.replace(/<td>/g, "<th>").replace(/<\/td>/g, "</th>")}</tr>`;
+        firstTableRow = false;
+      } else {
+        html += `<tr>${cells}</tr>`;
+      }
+      i++;
+    } else if (parts[i] === "__TABLE_END__") {
+      html += "</table>";
+      i++;
     } else {
       html += parts[i];
       i++;
@@ -93,7 +133,15 @@ async function fetchAllBlocks(notion, blockId) {
   let cursor;
   do {
     const res = await notion.blocks.children.list({ block_id: blockId, start_cursor: cursor, page_size: 100 });
-    blocks.push(...res.results);
+    for (const block of res.results) {
+      blocks.push(block);
+      // Fetch children for tables and toggles
+      if (block.has_children && (block.type === "table" || block.type === "toggle")) {
+        const children = await fetchAllBlocks(notion, block.id);
+        blocks.push(...children);
+        if (block.type === "table") blocks.push({ type: "__table_end", __table_end: {} });
+      }
+    }
     cursor = res.next_cursor;
   } while (cursor);
   return blocks;

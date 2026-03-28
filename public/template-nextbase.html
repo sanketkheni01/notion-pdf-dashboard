@@ -26,7 +26,7 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: 86px;
+      height: 80px;
       background: #fff;
       z-index: 1000;
     }
@@ -34,8 +34,8 @@
     .header-inner {
       display: flex;
       align-items: center;
-      margin: 21px 40px 0;
-      height: 64px;
+      margin: 18px 40px 0;
+      height: 56px;
     }
 
     .logo-block {
@@ -45,8 +45,8 @@
     }
 
     .logo-icon {
-      width: 43px;
-      height: 43px;
+      width: 40px;
+      height: 40px;
       flex-shrink: 0;
     }
 
@@ -58,7 +58,7 @@
 
     .logo-name {
       font-family: 'Poppins', sans-serif;
-      font-size: 23px;
+      font-size: 18pt;
       font-weight: 600;
       color: #0a0a0a;
       letter-spacing: -0.3px;
@@ -66,7 +66,7 @@
 
     .logo-sub {
       font-family: 'Poppins', sans-serif;
-      font-size: 7.85px;
+      font-size: 6pt;
       font-weight: 500;
       color: #525252;
     }
@@ -83,7 +83,7 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 144px;
+      height: 100px;
       background: #fff;
       z-index: 1000;
     }
@@ -95,14 +95,14 @@
     .footer-top-divider {
       height: 0.5px;
       background: #e5e5e5;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
     }
 
     .footer-contacts {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      margin-bottom: 16px;
+      gap: 5px;
+      margin-bottom: 10px;
     }
 
     .footer-row {
@@ -112,8 +112,8 @@
     }
 
     .footer-icon {
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       flex-shrink: 0;
       display: flex;
       align-items: center;
@@ -122,7 +122,7 @@
 
     .footer-text {
       font-family: 'Geist', 'Inter', Arial, sans-serif;
-      font-size: 11px;
+      font-size: 8pt;
       font-weight: 400;
       color: #525252;
       line-height: 1;
@@ -131,7 +131,7 @@
     .footer-addr-divider {
       height: 0.5px;
       background: #e5e5e5;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
     }
 
     .footer-address {
@@ -147,60 +147,77 @@
 
     /* ── CONTENT (push away from fixed header/footer) ─ */
     .content-body {
-      margin-top: 86px;
-      margin-bottom: 144px;
-      padding: 24px 40px 16px;
+      margin-top: 96px;
+      margin-bottom: 110px;
+      padding: 0 40px 16px;
       line-height: 1.75;
       font-size: 11pt;
     }
 
+    /* ── PAGE BREAK CONTROL ─ */
+    .content-body h1,
+    .content-body h2,
+    .content-body h3 {
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+
+    .content-body p,
+    .content-body li,
+    .content-body blockquote {
+      page-break-inside: avoid;
+      break-inside: avoid;
+      orphans: 3;
+      widows: 3;
+    }
+
     .content-body h1 {
       font-family: 'Poppins', sans-serif;
-      font-size: 18px;
+      font-size: 16pt;
       font-weight: 600;
-      margin-bottom: 14px;
+      margin-bottom: 12pt;
       color: #0a0a0a;
     }
 
     .content-body h2 {
       font-family: 'Poppins', sans-serif;
-      font-size: 14px;
+      font-size: 13pt;
       font-weight: 600;
-      margin-bottom: 10px;
-      margin-top: 18px;
+      margin-bottom: 8pt;
+      margin-top: 14pt;
       color: #0a0a0a;
     }
 
     .content-body h3 {
       font-family: 'Poppins', sans-serif;
-      font-size: 12px;
+      font-size: 11pt;
       font-weight: 600;
-      margin-bottom: 6px;
-      margin-top: 14px;
+      margin-bottom: 5pt;
+      margin-top: 10pt;
       color: #0a0a0a;
     }
 
-    .content-body p  { margin-bottom: 10px; }
-    .content-body br { display: block; margin-bottom: 6px; }
+    .content-body p  { margin-bottom: 8pt; }
+    .content-body br { display: block; margin-bottom: 4pt; }
 
     .content-body ul,
     .content-body ol {
-      margin: 6px 0 10px 18px;
+      margin: 4pt 0 8pt 18pt;
     }
 
-    .content-body li { margin-bottom: 4px; }
+    .content-body li { margin-bottom: 3pt; }
 
     .content-body hr {
       border: none;
       border-top: 0.5px solid #e5e5e5;
-      margin: 14px 0;
+      margin: 12pt 0;
     }
 
     .content-body blockquote {
       border-left: 3px solid #e5e5e5;
       padding-left: 12px;
       color: #525252;
-      margin: 8px 0;
+      margin: 6pt 0;
     }
 
     .content-body strong { font-weight: 600; }
@@ -210,8 +227,78 @@
       background: #f4f4f4;
       padding: 1px 4px;
       border-radius: 3px;
-      font-size: 10px;
+      font-size: 9pt;
       font-family: monospace;
+    }
+
+    .content-body pre {
+      background: #f4f4f4;
+      padding: 10px 14px;
+      border-radius: 4px;
+      font-size: 9pt;
+      font-family: monospace;
+      overflow-x: auto;
+      margin: 6pt 0 8pt;
+      white-space: pre-wrap;
+      page-break-inside: avoid;
+    }
+
+    .content-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 6pt 0 10pt;
+      font-size: 10pt;
+      page-break-inside: avoid;
+    }
+
+    .content-body th,
+    .content-body td {
+      border: 0.5px solid #d4d4d4;
+      padding: 6px 10px;
+      text-align: left;
+    }
+
+    .content-body th {
+      background: #f5f5f5;
+      font-weight: 600;
+    }
+
+    .content-body .todo-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 4pt;
+    }
+
+    .content-body .todo-check {
+      width: 12px;
+      height: 12px;
+      border: 1px solid #a3a3a3;
+      border-radius: 2px;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .content-body .todo-check.checked {
+      background: #0a0a0a;
+      border-color: #0a0a0a;
+    }
+
+    .content-body .notion-image {
+      max-width: 100%;
+      margin: 8pt 0;
+      page-break-inside: avoid;
+    }
+
+    .content-body .notion-image img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .content-body .notion-image figcaption {
+      font-size: 9pt;
+      color: #737373;
+      margin-top: 4px;
     }
   </style>
 </head>
@@ -284,7 +371,7 @@
             <circle cx="6" cy="6" r="2" stroke="#525252"/>
           </svg>
         </div>
-        <span class="footer-text">505 RIO Bussiness Hub, Beside KBC 2, Yamuna Chowk, Mota Varachha, Surat, Gujarat 394101.</span>
+        <span class="footer-text">505 RIO Business Hub, Beside KBC 2, Yamuna Chowk, Mota Varachha, Surat, Gujarat 394101.</span>
       </div>
     </div>
   </div>
