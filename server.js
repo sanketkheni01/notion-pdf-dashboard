@@ -190,9 +190,8 @@ app.post("/api/convert", async (req, res) => {
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
-      // No page margins — the fixed header/footer divs handle spacing via CSS
-      margin: { top: "0", right: "0", bottom: "0", left: "0" },
-      // Display header/footer from fixed-position divs (CSS handles it)
+      // Margins reserve space for the fixed header/footer on every page
+      margin: { top: "96px", right: "0", bottom: "140px", left: "0" },
       displayHeaderFooter: false,
     });
 
