@@ -13,11 +13,11 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      width: 595px;
+      width: 100%;
       background: #fff;
       font-family: 'Geist', 'Inter', Arial, sans-serif;
       color: #0a0a0a;
-      font-size: 11px;
+      font-size: 11pt;
     }
 
     /* ── HEADER (fixed, repeats on every page) ─────── */
@@ -25,8 +25,8 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 595px;
-      height: 86px; /* 21px top padding + 64px frame + 1px divider */
+      width: 100%;
+      height: 86px;
       background: #fff;
       z-index: 1000;
     }
@@ -34,8 +34,7 @@
     .header-inner {
       display: flex;
       align-items: center;
-      width: 556px;
-      margin: 21px auto 0;
+      margin: 21px 20px 0;
       height: 64px;
     }
 
@@ -73,8 +72,7 @@
     }
 
     .header-divider {
-      width: 556px;
-      margin: 0 auto;
+      margin: 0 20px;
       height: 0.5px;
       background: #e5e5e5;
     }
@@ -84,15 +82,14 @@
       position: fixed;
       bottom: 0;
       left: 0;
-      width: 595px;
+      width: 100%;
       height: 144px;
       background: #fff;
       z-index: 1000;
     }
 
     .footer-inner {
-      width: 556px;
-      margin: 0 auto;
+      margin: 0 20px;
     }
 
     .footer-top-divider {
@@ -152,9 +149,9 @@
     .content-body {
       margin-top: 86px;
       margin-bottom: 144px;
-      padding: 24px 19.5px 16px;
+      padding: 24px 20px 16px;
       line-height: 1.75;
-      font-size: 11px;
+      font-size: 11pt;
     }
 
     .content-body h1 {

@@ -137,8 +137,6 @@ app.post("/api/convert", async (req, res) => {
       args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
     });
     const page = await browser.newPage();
-    // Match viewport to A4 dimensions so content fills the full page
-    await page.setViewport({ width: 595, height: 842 });
     await page.setContent(finalHtml, { waitUntil: "networkidle2" });
 
     const pdf = await page.pdf({
