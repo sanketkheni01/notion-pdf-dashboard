@@ -187,73 +187,11 @@ app.post("/api/convert", async (req, res) => {
     const page = await browser.newPage();
     await page.setContent(finalHtml, { waitUntil: "networkidle2" });
 
-    const headerTemplate = `
-      <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        .hdr { width: 100%; padding: 18px 40px 0; }
-        .hdr-inner { display: flex; align-items: center; height: 56px; }
-        .logo-icon { width: 40px; height: 40px; margin-right: 8px; }
-        .logo-name { font-family: 'Poppins', sans-serif; font-size: 18pt; font-weight: 600; color: #0a0a0a; letter-spacing: -0.3px; }
-        .logo-sub { font-family: 'Poppins', sans-serif; font-size: 6pt; font-weight: 500; color: #525252; display: block; }
-        .hdr-div { margin: 0 40px; height: 0.5px; background: #e5e5e5; }
-      </style>
-      <div class="hdr">
-        <div class="hdr-inner">
-          <svg class="logo-icon" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M21.3257 0C33.1036 0 42.6515 9.54797 42.6515 21.3258C42.6515 33.1037 33.1036 42.6515 21.3257 42.6515C9.54788 42.6515 0 33.1037 0 21.3258C1.11467e-05 9.54796 9.54788 0 21.3257 0ZM9.68693 21.2817L21.266 20.5198L26.6016 31.2282V11.5184L9.68693 21.2817Z" fill="#0A0A0A"/>
-          </svg>
-          <div>
-            <span class="logo-name">Nextbase</span>
-            <span class="logo-sub">Solutions Private Limited</span>
-          </div>
-        </div>
-      </div>
-      <div class="hdr-div"></div>
-    `;
-
-    const footerTemplate = `
-      <style>
-        @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        .ftr { width: 100%; padding: 0 40px; font-family: 'Geist', 'Inter', Arial, sans-serif; }
-        .ftr-div { height: 0.5px; background: #e5e5e5; margin-bottom: 10px; }
-        .ftr-row { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
-        .ftr-icon { width: 13px; height: 13px; flex-shrink: 0; }
-        .ftr-text { font-size: 8pt; color: #525252; line-height: 1; }
-        .ftr-addr { display: flex; align-items: flex-start; gap: 6px; }
-        .ftr-addr .ftr-text { flex: 1; line-height: 1.4; }
-        .ftr-addr-div { height: 0.5px; background: #e5e5e5; margin-bottom: 6px; }
-      </style>
-      <div class="ftr">
-        <div class="ftr-div"></div>
-        <div class="ftr-row">
-          <svg class="ftr-icon" viewBox="0 0 13 11" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="0.5" width="12" height="10" rx="1.5" stroke="#525252"/><path d="M0.5 2L6.5 6.5L12.5 2" stroke="#525252"/></svg>
-          <span class="ftr-text">contact@nextbase.solutions</span>
-        </div>
-        <div class="ftr-row">
-          <svg class="ftr-icon" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 8.5C11 8.5 9.5 10 9 10C5 10 2 7 2 3C2 2.5 3.5 1 3.5 1L5.5 4.5L4.5 5.5C5 7 6.5 8 7.5 8L8.5 7L11 8.5Z" stroke="#525252" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span class="ftr-text">+91 94271 36629</span>
-        </div>
-        <div class="ftr-row">
-          <svg class="ftr-icon" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6.5" r="5.5" stroke="#525252"/><ellipse cx="6" cy="6.5" rx="2" ry="5.5" stroke="#525252"/><line x1="0.5" y1="6.5" x2="11.5" y2="6.5" stroke="#525252"/></svg>
-          <span class="ftr-text">www.nextbase.solutions</span>
-        </div>
-        <div class="ftr-addr-div"></div>
-        <div class="ftr-addr">
-          <svg class="ftr-icon" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6C10 9.5 6 12 6 12C6 12 2 9.5 2 6C2 3.79086 3.79086 2 6 2C8.20914 2 10 3.79086 10 6Z" stroke="#525252"/><circle cx="6" cy="6" r="2" stroke="#525252"/></svg>
-          <span class="ftr-text">505 RIO Business Hub, Beside KBC 2, Yamuna Chowk, Mota Varachha, Surat, Gujarat 394101.</span>
-        </div>
-      </div>
-    `;
-
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
-      margin: { top: "100px", right: "0", bottom: "130px", left: "0" },
-      displayHeaderFooter: true,
-      headerTemplate,
-      footerTemplate,
+      margin: { top: "100px", right: "0", bottom: "120px", left: "0" },
+      displayHeaderFooter: false,
     });
 
     await browser.close();
