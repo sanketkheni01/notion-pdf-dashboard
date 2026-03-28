@@ -180,6 +180,38 @@ app.post("/api/convert", async (req, res) => {
     const contentHtml = wrapLists(parts);
     const finalHtml = LETTER_TEMPLATE.replace("{{NOTION_CONTENT}}", contentHtml);
 
+    // SVG data URIs for icons (Puppeteer templates can't load external resources)
+    const logoSvg = `data:image/svg+xml,${encodeURIComponent('<svg viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.3257 0C33.1036 0 42.6515 9.54797 42.6515 21.3258C42.6515 33.1037 33.1036 42.6515 21.3257 42.6515C9.54788 42.6515 0 33.1037 0 21.3258C1.11467e-05 9.54796 9.54788 0 21.3257 0ZM9.68693 21.2817L21.266 20.5198L26.6016 31.2282V11.5184L9.68693 21.2817Z" fill="#0A0A0A"/></svg>')}`;
+    const emailSvg = `data:image/svg+xml,${encodeURIComponent('<svg viewBox="0 0 13 11" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="0.5" width="12" height="10" rx="1.5" stroke="#525252"/><path d="M0.5 2L6.5 6.5L12.5 2" stroke="#525252"/></svg>')}`;
+    const phoneSvg = `data:image/svg+xml,${encodeURIComponent('<svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 8.5C11 8.5 9.5 10 9 10C5 10 2 7 2 3C2 2.5 3.5 1 3.5 1L5.5 4.5L4.5 5.5C5 7 6.5 8 7.5 8L8.5 7L11 8.5Z" stroke="#525252" stroke-linecap="round" stroke-linejoin="round"/></svg>')}`;
+    const webSvg = `data:image/svg+xml,${encodeURIComponent('<svg viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6.5" r="5.5" stroke="#525252"/><ellipse cx="6" cy="6.5" rx="2" ry="5.5" stroke="#525252"/><line x1="0.5" y1="6.5" x2="11.5" y2="6.5" stroke="#525252"/></svg>')}`;
+    const pinSvg = `data:image/svg+xml,${encodeURIComponent('<svg viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6C10 9.5 6 12 6 12C6 12 2 9.5 2 6C2 3.79086 3.79086 2 6 2C8.20914 2 10 3.79086 10 6Z" stroke="#525252"/><circle cx="6" cy="6" r="2" stroke="#525252"/></svg>')}`;
+
+    // Puppeteer renders header/footer at ~75% scale, so sizes are bumped ~33%
+    const headerTemplate = `
+      <div style="width:100%;padding:12px 52px 0;font-size:10px;">
+        <div style="display:flex;align-items:center;">
+          <img src="${logoSvg}" style="width:50px;height:50px;margin-right:12px;" />
+          <div>
+            <div style="font-family:Helvetica,Arial,sans-serif;font-size:30px;font-weight:bold;color:#0a0a0a;letter-spacing:-0.3px;line-height:1.1;">Nextbase</div>
+            <div style="font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:500;color:#525252;margin-top:1px;">Solutions Private Limited</div>
+          </div>
+        </div>
+        <div style="margin-top:8px;height:1px;background:#e5e5e5;"></div>
+      </div>
+    `;
+
+    const footerTemplate = `
+      <div style="width:100%;padding:0 52px 8px;font-size:10px;font-family:Helvetica,Arial,sans-serif;">
+        <div style="height:1px;background:#e5e5e5;margin-bottom:8px;"></div>
+        <div style="margin-bottom:3px;"><img src="${emailSvg}" style="width:15px;height:13px;vertical-align:middle;margin-right:6px;" /><span style="color:#525252;font-size:12px;vertical-align:middle;">contact@nextbase.solutions</span></div>
+        <div style="margin-bottom:3px;"><img src="${phoneSvg}" style="width:14px;height:14px;vertical-align:middle;margin-right:6px;" /><span style="color:#525252;font-size:12px;vertical-align:middle;">+91 94271 36629</span></div>
+        <div style="margin-bottom:3px;"><img src="${webSvg}" style="width:14px;height:15px;vertical-align:middle;margin-right:6px;" /><span style="color:#525252;font-size:12px;vertical-align:middle;">www.nextbase.solutions</span></div>
+        <div style="height:1px;background:#e5e5e5;margin:4px 0;"></div>
+        <div><img src="${pinSvg}" style="width:14px;height:15px;vertical-align:middle;margin-right:6px;" /><span style="color:#525252;font-size:12px;vertical-align:middle;">505 RIO Business Hub, Beside KBC 2, Yamuna Chowk, Mota Varachha, Surat, Gujarat 394101.</span></div>
+      </div>
+    `;
+
     browser = await puppeteer.launch({
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
@@ -190,8 +222,10 @@ app.post("/api/convert", async (req, res) => {
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
-      margin: { top: "100px", right: "0", bottom: "130px", left: "0" },
-      displayHeaderFooter: false,
+      margin: { top: "100px", right: "40px", bottom: "120px", left: "40px" },
+      displayHeaderFooter: true,
+      headerTemplate,
+      footerTemplate,
     });
 
     await browser.close();
