@@ -180,51 +180,6 @@ app.post("/api/convert", async (req, res) => {
     const contentHtml = wrapLists(parts);
     const finalHtml = LETTER_TEMPLATE.replace("{{NOTION_CONTENT}}", contentHtml);
 
-    const logoB64 = "PHN2ZyB2aWV3Qm94PSIwIDAgNDMgNDMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIxLjMyNTcgMEMzMy4xMDM2IDAgNDIuNjUxNSA5LjU0Nzk3IDQyLjY1MTUgMjEuMzI1OEM0Mi42NTE1IDMzLjEwMzcgMzMuMTAzNiA0Mi42NTE1IDIxLjMyNTcgNDIuNjUxNUM5LjU0Nzg4IDQyLjY1MTUgMCAzMy4xMDM3IDAgMjEuMzI1OEMxLjExNDY3ZS0wNSA5LjU0Nzk2IDkuNTQ3ODggMCAyMS4zMjU3IDBaTTkuNjg2OTMgMjEuMjgxN0wyMS4yNjYgMjAuNTE5OEwyNi42MDE2IDMxLjIyODJWMTEuNTE4NEw5LjY4NjkzIDIxLjI4MTdaIiBmaWxsPSIjMEEwQTBBIi8+PC9zdmc+";
-
-    const emailIcon = "PHN2ZyB3aWR0aD0iMTMiIGhlaWdodD0iMTEiIHZpZXdCb3g9IjAgMCAxMyAxMSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB4PSIwLjUiIHk9IjAuNSIgd2lkdGg9IjEyIiBoZWlnaHQ9IjEwIiByeD0iMS41IiBzdHJva2U9IiM1MjUyNTIiLz48cGF0aCBkPSJNMC41IDJMNi41IDYuNUwxMi41IDIiIHN0cm9rZT0iIzUyNTI1MiIvPjwvc3ZnPg==";
-    const phoneIcon = "PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEgOC41QzExIDguNSA5LjUgMTAgOSAxMEM1IDEwIDIgNyAyIDNDMiAyLjUgMy41IDEgMy41IDFMNS41IDQuNUw0LjUgNS41QzUgNyA2LjUgOCA3LjUgOEw4LjUgN0wxMSA4LjVaIiBzdHJva2U9IiM1MjUyNTIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==";
-    const webIcon = "PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAxMiAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI2IiBjeT0iNi41IiByPSI1LjUiIHN0cm9rZT0iIzUyNTI1MiIvPjxlbGxpcHNlIGN4PSI2IiBjeT0iNi41IiByeD0iMiIgcnk9IjUuNSIgc3Ryb2tlPSIjNTI1MjUyIi8+PGxpbmUgeDE9IjAuNSIgeTE9IjYuNSIgeDI9IjExLjUiIHkyPSI2LjUiIHN0cm9rZT0iIzUyNTI1MiIvPjwvc3ZnPg==";
-    const pinIcon = "PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAxMiAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgNkMxMCA5LjUgNiAxMiA2IDEyQzYgMTIgMiA5LjUgMiA2QzIgMy43OTA4NiAzLjc5MDg2IDIgNiAyQzguMjA5MTQgMiAxMCAzLjc5MDg2IDEwIDZaIiBzdHJva2U9IiM1MjUyNTIiLz48Y2lyY2xlIGN4PSI2IiBjeT0iNiIgcj0iMiIgc3Ryb2tlPSIjNTI1MjUyIi8+PC9zdmc+";
-
-    const headerTemplate = `
-      <style>@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap');</style>
-      <div style="width:100%;padding:18px 40px 0;font-size:14px;">
-        <div style="display:flex;align-items:center;height:56px;">
-          <img src="data:image/svg+xml;base64,${logoB64}" style="width:44px;height:44px;margin-right:10px;" />
-          <div>
-            <div style="font-family:'Poppins',Arial,sans-serif;font-size:28px;font-weight:600;color:#0a0a0a;letter-spacing:-0.3px;">Nextbase</div>
-            <div style="font-family:'Poppins',Arial,sans-serif;font-size:10px;font-weight:500;color:#525252;">Solutions Private Limited</div>
-          </div>
-        </div>
-        <div style="margin-top:6px;height:1px;background:#e5e5e5;"></div>
-      </div>
-    `;
-
-    const footerTemplate = `
-      <style>@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400&display=swap');</style>
-      <div style="width:100%;padding:0 40px;font-size:14px;font-family:'Geist','Inter',Arial,sans-serif;">
-        <div style="height:1px;background:#e5e5e5;margin-bottom:10px;"></div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
-          <img src="data:image/svg+xml;base64,${emailIcon}" style="width:14px;height:12px;" />
-          <span style="color:#525252;font-size:11px;">contact@nextbase.solutions</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
-          <img src="data:image/svg+xml;base64,${phoneIcon}" style="width:13px;height:13px;" />
-          <span style="color:#525252;font-size:11px;">+91 94271 36629</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
-          <img src="data:image/svg+xml;base64,${webIcon}" style="width:13px;height:14px;" />
-          <span style="color:#525252;font-size:11px;">www.nextbase.solutions</span>
-        </div>
-        <div style="height:1px;background:#e5e5e5;margin:5px 0;"></div>
-        <div style="display:flex;align-items:flex-start;gap:8px;">
-          <img src="data:image/svg+xml;base64,${pinIcon}" style="width:13px;height:14px;margin-top:1px;" />
-          <span style="color:#525252;font-size:11px;line-height:1.4;">505 RIO Business Hub, Beside KBC 2, Yamuna Chowk, Mota Varachha, Surat, Gujarat 394101.</span>
-        </div>
-      </div>
-    `;
-
     browser = await puppeteer.launch({
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
@@ -235,10 +190,8 @@ app.post("/api/convert", async (req, res) => {
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
-      margin: { top: "100px", right: "0", bottom: "110px", left: "0" },
-      displayHeaderFooter: true,
-      headerTemplate,
-      footerTemplate,
+      margin: { top: "100px", right: "0", bottom: "130px", left: "0" },
+      displayHeaderFooter: false,
     });
 
     await browser.close();
