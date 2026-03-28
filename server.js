@@ -180,6 +180,32 @@ app.post("/api/convert", async (req, res) => {
     const contentHtml = wrapLists(parts);
     const finalHtml = LETTER_TEMPLATE.replace("{{NOTION_CONTENT}}", contentHtml);
 
+    const logoB64 = "PHN2ZyB2aWV3Qm94PSIwIDAgNDMgNDMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIxLjMyNTcgMEMzMy4xMDM2IDAgNDIuNjUxNSA5LjU0Nzk3IDQyLjY1MTUgMjEuMzI1OEM0Mi42NTE1IDMzLjEwMzcgMzMuMTAzNiA0Mi42NTE1IDIxLjMyNTcgNDIuNjUxNUM5LjU0Nzg4IDQyLjY1MTUgMCAzMy4xMDM3IDAgMjEuMzI1OEMxLjExNDY3ZS0wNSA5LjU0Nzk2IDkuNTQ3ODggMCAyMS4zMjU3IDBaTTkuNjg2OTMgMjEuMjgxN0wyMS4yNjYgMjAuNTE5OEwyNi42MDE2IDMxLjIyODJWMTEuNTE4NEw5LjY4NjkzIDIxLjI4MTdaIiBmaWxsPSIjMEEwQTBBIi8+PC9zdmc+";
+
+    const headerTemplate = `
+      <div style="width:100%;padding:14px 40px 0;font-size:10px;">
+        <div style="display:flex;align-items:center;height:50px;">
+          <img src="data:image/svg+xml;base64,${logoB64}" style="width:36px;height:36px;margin-right:8px;" />
+          <div>
+            <div style="font-family:Arial,sans-serif;font-size:20px;font-weight:bold;color:#0a0a0a;letter-spacing:-0.3px;">Nextbase</div>
+            <div style="font-family:Arial,sans-serif;font-size:7px;font-weight:500;color:#525252;">Solutions Private Limited</div>
+          </div>
+        </div>
+        <div style="margin-top:4px;height:1px;background:#e5e5e5;"></div>
+      </div>
+    `;
+
+    const footerTemplate = `
+      <div style="width:100%;padding:0 40px;font-size:10px;font-family:Arial,sans-serif;">
+        <div style="height:1px;background:#e5e5e5;margin-bottom:8px;"></div>
+        <div style="color:#525252;font-size:8px;margin-bottom:4px;">✉ contact@nextbase.solutions</div>
+        <div style="color:#525252;font-size:8px;margin-bottom:4px;">☎ +91 94271 36629</div>
+        <div style="color:#525252;font-size:8px;margin-bottom:4px;">⊕ www.nextbase.solutions</div>
+        <div style="height:1px;background:#e5e5e5;margin:4px 0;"></div>
+        <div style="color:#525252;font-size:8px;">⊙ 505 RIO Business Hub, Beside KBC 2, Yamuna Chowk, Mota Varachha, Surat, Gujarat 394101.</div>
+      </div>
+    `;
+
     browser = await puppeteer.launch({
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
@@ -190,8 +216,10 @@ app.post("/api/convert", async (req, res) => {
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
-      margin: { top: "100px", right: "0", bottom: "120px", left: "0" },
-      displayHeaderFooter: false,
+      margin: { top: "100px", right: "0", bottom: "110px", left: "0" },
+      displayHeaderFooter: true,
+      headerTemplate,
+      footerTemplate,
     });
 
     await browser.close();
