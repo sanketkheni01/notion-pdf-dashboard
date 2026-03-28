@@ -218,7 +218,7 @@ async function stampHeaderFooter(pdfBytes) {
 
   for (const page of pages) {
     const { width, height } = page.getSize();
-    const marginX = 40;
+    const marginX = 30;
 
     // ── HEADER ──
     // Logo
