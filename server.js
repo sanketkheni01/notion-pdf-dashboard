@@ -150,7 +150,7 @@ const CONTENT_TEMPLATE = `<!DOCTYPE html>
   <meta charset="UTF-8" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Geist:wght@400&display=swap" rel="stylesheet" />
   <style>
-    @page { size: A4; margin: 0; }
+    @page { size: A4; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       width: 100%;
@@ -159,7 +159,7 @@ const CONTENT_TEMPLATE = `<!DOCTYPE html>
       color: #0a0a0a;
       font-size: 11pt;
       line-height: 1.75;
-      padding: 0 40px;
+      padding: 0;
     }
     h1, h2, h3 { font-family: 'Poppins', sans-serif; color: #0a0a0a; page-break-after: avoid; }
     p, li, blockquote { orphans: 3; widows: 3; }
@@ -346,7 +346,7 @@ app.post("/api/convert", async (req, res) => {
       format: "A4",
       printBackground: true,
       displayHeaderFooter: false,
-      margin: { top: "80px", right: "0", bottom: "105px", left: "0" },
+      margin: { top: "110px", right: "40px", bottom: "130px", left: "40px" },
     });
 
     await browser.close();
