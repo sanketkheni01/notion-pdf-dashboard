@@ -1,0 +1,14 @@
+{
+  "functions": {
+    "api/convert.js": {
+      "includeFiles": "fonts/**,assets/**",
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  },
+  "routes": [
+    { "src": "/api/health", "dest": "/api/health.js" },
+    { "src": "/api/convert", "dest": "/api/convert.js" },
+    { "src": "/(.*)", "dest": "/public/$1" }
+  ]
+}
