@@ -1,14 +1,19 @@
 {
-  "functions": {
-    "api/convert.js": {
-      "includeFiles": "fonts/**,assets/**",
-      "memory": 1024,
-      "maxDuration": 60
-    }
-  },
+  "buildCommand": "",
+  "installCommand": "bun install",
+  "framework": null,
+  "builds": [
+    { "src": "api/convert.js", "use": "@vercel/node", "config": { "includeFiles": ["fonts/**", "assets/**", "node_modules/@sparticuz/chromium/bin/**"], "maxLambdaSize": "100mb" } },
+    { "src": "api/health.js", "use": "@vercel/node" },
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "settings.html", "use": "@vercel/static" },
+    { "src": "template-nextbase.html", "use": "@vercel/static" }
+  ],
   "routes": [
     { "src": "/api/health", "dest": "/api/health.js" },
     { "src": "/api/convert", "dest": "/api/convert.js" },
-    { "src": "/(.*)", "dest": "/public/$1" }
+    { "src": "/settings", "dest": "/settings.html" },
+    { "src": "/template-nextbase", "dest": "/template-nextbase.html" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }

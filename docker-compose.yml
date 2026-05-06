@@ -1,0 +1,9 @@
+services:
+  notion-pdf:
+    build: .
+    container_name: notion-pdf
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:4569:4569"

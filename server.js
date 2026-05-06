@@ -1,6 +1,6 @@
 const express = require("express");
 const { Client } = require("@notionhq/client");
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
 const { PDFDocument, rgb, StandardFonts } = require("pdf-lib");
 const fontkit = require("@pdf-lib/fontkit");
 const path = require("path");
@@ -314,6 +314,59 @@ async function stampHeaderFooter(pdfBytes) {
 }
 
 // ── Routes ──────────────────────────────────────────────────────────
+app.get("/", (_, res) => {
+  res.type("html").send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notion PDF Dashboard</title>
+  <style>
+    body {
+      font-family: Inter, Arial, sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
+    h1 { margin-top: 0; font-size: 28px; }
+    p { line-height: 1.6; color: #334155; }
+    code {
+      background: #eef2ff;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .box {
+      margin-top: 20px;
+      padding: 16px;
+      background: #f1f5f9;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Notion PDF Dashboard</h1>
+    <p>This service converts shared Notion pages into styled PDFs.</p>
+    <div class="box">
+      <p><strong>Health check:</strong> <code>GET /api/health</code></p>
+      <p><strong>Convert endpoint:</strong> <code>POST /api/convert</code></p>
+      <p>Send JSON like <code>{"notionUrl":"https://www.notion.so/..."}</code></p>
+    </div>
+  </div>
+</body>
+</html>`);
+});
+
 app.get("/api/health", (_, res) => res.json({ status: "ok", timestamp: new Date().toISOString() }));
 
 app.post("/api/convert", async (req, res) => {
@@ -337,6 +390,7 @@ app.post("/api/convert", async (req, res) => {
     // Step 1: Puppeteer renders content-only PDF with reserved margins
     browser = await puppeteer.launch({
       headless: true,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
       args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
     });
     const page = await browser.newPage();

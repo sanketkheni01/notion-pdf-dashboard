@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nextbase Letterhead</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Geist:wght@400&display=swap" rel="stylesheet" />
+  <style>
+    @page { size: A4; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 100%;
+      background: #fff;
+      font-family: 'Geist', 'Inter', Arial, sans-serif;
+      color: #0a0a0a;
+      font-size: 11pt;
+    }
+
+    /* ── CONTENT ─ */
+    .content-body {
+      padding: 8px 0 20px;
+      line-height: 1.75;
+      font-size: 11pt;
+    }
+
+    .content-body h1,
+    .content-body h2,
+    .content-body h3 {
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+
+    .content-body p,
+    .content-body li,
+    .content-body blockquote {
+      page-break-inside: avoid;
+      break-inside: avoid;
+      orphans: 3;
+      widows: 3;
+    }
+
+    .content-body h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16pt;
+      font-weight: 600;
+      margin-bottom: 12pt;
+      color: #0a0a0a;
+    }
+
+    .content-body h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 13pt;
+      font-weight: 600;
+      margin-bottom: 8pt;
+      margin-top: 14pt;
+      color: #0a0a0a;
+    }
+
+    .content-body h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 11pt;
+      font-weight: 600;
+      margin-bottom: 5pt;
+      margin-top: 10pt;
+      color: #0a0a0a;
+    }
+
+    .content-body p  { margin-bottom: 8pt; }
+    .content-body br { display: block; margin-bottom: 4pt; }
+
+    .content-body ul,
+    .content-body ol {
+      margin: 4pt 0 8pt 18pt;
+    }
+
+    .content-body li { margin-bottom: 3pt; }
+
+    .content-body hr {
+      border: none;
+      border-top: 0.5px solid #e5e5e5;
+      margin: 12pt 0;
+    }
+
+    .content-body blockquote {
+      border-left: 3px solid #e5e5e5;
+      padding-left: 12px;
+      color: #525252;
+      margin: 6pt 0;
+    }
+
+    .content-body strong { font-weight: 600; }
+    .content-body em     { font-style: italic; }
+
+    .content-body code {
+      background: #f4f4f4;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: 9pt;
+      font-family: monospace;
+    }
+
+    .content-body pre {
+      background: #f4f4f4;
+      padding: 10px 14px;
+      border-radius: 4px;
+      font-size: 9pt;
+      font-family: monospace;
+      overflow-x: auto;
+      margin: 6pt 0 8pt;
+      white-space: pre-wrap;
+      page-break-inside: avoid;
+    }
+
+    .content-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 6pt 0 10pt;
+      font-size: 10pt;
+      page-break-inside: avoid;
+    }
+
+    .content-body th,
+    .content-body td {
+      border: 0.5px solid #d4d4d4;
+      padding: 6px 10px;
+      text-align: left;
+    }
+
+    .content-body th {
+      background: #f5f5f5;
+      font-weight: 600;
+    }
+
+    .content-body .todo-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 4pt;
+    }
+
+    .content-body .todo-check {
+      width: 12px;
+      height: 12px;
+      border: 1px solid #a3a3a3;
+      border-radius: 2px;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .content-body .todo-check.checked {
+      background: #0a0a0a;
+      border-color: #0a0a0a;
+    }
+
+    .content-body .notion-image {
+      max-width: 100%;
+      margin: 8pt 0;
+      page-break-inside: avoid;
+    }
+
+    .content-body .notion-image img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .content-body .notion-image figcaption {
+      font-size: 9pt;
+      color: #737373;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <!-- CONTENT ONLY — header/footer handled by Puppeteer native templates -->
+  <div class="content-body">
+    {{NOTION_CONTENT}}
+  </div>
+</body>
+</html>

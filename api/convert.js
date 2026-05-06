@@ -1,5 +1,9 @@
 const chromium = require("@sparticuz/chromium");
 const puppeteer = require("puppeteer-core");
+
+// Vercel serverless compatibility
+chromium.setHeadlessMode = true;
+chromium.setGraphicsMode = false;
 const { Client } = require("@notionhq/client");
 const { PDFDocument, rgb } = require("pdf-lib");
 const fontkit = require("@pdf-lib/fontkit");
@@ -333,10 +337,16 @@ module.exports = async (req, res) => {
 
     // Step 1: Puppeteer renders content-only PDF with reserved margins
     browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
+      args: [
+        ...chromium.args,
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--single-process',
+        '--no-zygote',
+      ],
+      defaultViewport: { width: 794, height: 1123 },
       executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
+      headless: 'shell',
     });
 
     const page = await browser.newPage();
@@ -360,7 +370,7 @@ module.exports = async (req, res) => {
     res.send(Buffer.from(finalPdf));
   } catch (e) {
     if (browser) await browser.close().catch(() => {});
-    console.error("[convert]", e.message);
-    res.status(500).json({ error: e.message });
+    console.error("[convert]", e.message, e.stack);
+    res.status(500).json({ error: e.message, stack: e.stack });
   }
 };
