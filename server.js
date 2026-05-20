@@ -147,6 +147,19 @@ function wrapLists(parts) {
   return html;
 }
 
+function getPuppeteerExecutablePath() {
+  if (process.env.PUPPETEER_EXECUTABLE_PATH) return process.env.PUPPETEER_EXECUTABLE_PATH;
+
+  const candidates = [
+    "/usr/bin/chromium",
+    "/usr/bin/chromium-browser",
+    "/snap/bin/chromium",
+    "/usr/bin/google-chrome-stable",
+    "/usr/bin/google-chrome",
+  ];
+  return candidates.find((candidate) => fs.existsSync(candidate));
+}
+
 async function fetchAllBlocks(notion, blockId) {
   let blocks = [];
   let cursor;
@@ -413,9 +426,14 @@ app.post("/api/convert", async (req, res) => {
     const finalHtml = CONTENT_TEMPLATE.replace("{{NOTION_CONTENT}}", contentHtml);
 
     // Step 1: Puppeteer renders content-only PDF with reserved margins
+    const executablePath = getPuppeteerExecutablePath();
+    if (!executablePath) {
+      throw new Error("Chromium executable not found. Set PUPPETEER_EXECUTABLE_PATH or install Chromium.");
+    }
+
     browser = await puppeteer.launch({
       headless: true,
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+      executablePath,
       args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
     });
     const page = await browser.newPage();
