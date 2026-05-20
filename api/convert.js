@@ -66,6 +66,31 @@ function colorMap(c) {
   return map[c] || "#0a0a0a";
 }
 
+function parseNotionPageId(notionUrl) {
+  const raw = String(notionUrl || "").trim();
+
+  // Direct/canonical UUIDs can appear in copied Notion URLs.
+  const uuid = raw.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+  if (uuid) return uuid[0].replace(/-/g, "").toLowerCase();
+
+  // For slug URLs like /Page-title-<32hex>?source=copy_link, inspect the
+  // final path segment and take the trailing 32 hex chars. Do not remove
+  // hyphens from the whole URL first: title words can end in hex letters
+  // (e.g. "period-365..."), which shifts the ID by one character.
+  const pathOnly = raw.split(/[?#]/)[0];
+  const segments = pathOnly.split("/").filter(Boolean).reverse();
+  for (const segment of segments) {
+    const decoded = decodeURIComponent(segment);
+    const compact = decoded.replace(/-/g, "");
+    const match = compact.match(/([0-9a-f]{32})$/i);
+    if (match) return match[1].toLowerCase();
+  }
+
+  // Last-resort support for bare text containing one or more compact IDs.
+  const compactMatches = raw.match(/[0-9a-f]{32}/gi);
+  return compactMatches ? compactMatches[compactMatches.length - 1].toLowerCase() : null;
+}
+
 function blockToHtml(block) {
   const t = block.type;
   const data = block[t];
@@ -319,7 +344,7 @@ module.exports = async (req, res) => {
   const { notionUrl } = req.body || {};
   if (!notionUrl) return res.status(400).json({ error: "notionUrl required" });
 
-  const pageId = notionUrl.replace(/-/g, "").match(/([a-f0-9]{32})/)?.[1];
+  const pageId = parseNotionPageId(notionUrl);
   if (!pageId) return res.status(400).json({ error: "Invalid Notion URL" });
 
   const apiKey = process.env.NOTION_API_KEY;
